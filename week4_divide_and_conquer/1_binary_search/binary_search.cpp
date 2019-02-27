@@ -7,14 +7,14 @@ using std::vector;
 int binary_search(const vector<int> &a, int x) {
   int left = 0, right = (int)a.size(); 
   //write your code here
-  while (left < right)
+  while (left <= right)
   {
     int mid = left + (right - left) / 2;
     // std::cout << "left: " << left << " right: " << right << " mid: " << mid << " val: " << a[mid] << "\n";
     if (x == a[mid])
       return mid;
     else if (x < a[mid])
-      right = mid;
+      right = mid - 1;
     else
       left = mid + 1;
   }
