@@ -30,6 +30,11 @@ std::vector<int> unwind(const std::vector<int> &a, const std::vector<int> a_len,
 
 int lcs2(const vector<int> &a, const vector<int> &b) {
   //write your code here
+
+  //I think I can't search each array separately
+  //Need to search them simultaneously
+  //Inputs can be -,0,+ so can't pad them out to be the same size.
+  //Triple nested forloop? Maybe markers tracking position?
   std::vector<int> a_len(a.size()), b_len(b.size());
 
   for(size_t i = 0; i < a.size(); ++i)
