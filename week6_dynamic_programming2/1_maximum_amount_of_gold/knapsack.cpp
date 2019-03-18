@@ -26,12 +26,12 @@ int optimal_weight_dp(int W, const vector<int> &w)
     }
   }
 
-  // for (auto i : value)
-  // {
-  //   for (auto j : i)
-  //     std::cout << j << ' ';
-  //   std::cout << "\n";
-  // }
+  for (auto i : value)
+  {
+    for (auto j : i)
+      std::cout << j << ' ';
+    std::cout << "\n";
+  }
 
   return value.back().back();
 
