@@ -40,7 +40,9 @@ int main_with_large_stack_space() {
     nodes[child_index].key = child_index;
   }
 
-  // Replace this code with a faster implementation
+  //Can either be done by keeping track of each nodes height in a separate vector
+  //Or by adding the nodes height as a Node class parameter
+  //New node element seems to be slightly faster but takes up slightly more memory
   int maxHeight = 0;
   // std::vector<int> node_heights(n, 0);
   for (int leaf_index = 0; leaf_index < n; leaf_index++) {
@@ -62,7 +64,10 @@ int main_with_large_stack_space() {
     maxHeight = std::max(maxHeight, height);
   }
     
-  std::cout << maxHeight << ' ';//std::endl;
+  //use this line for testing
+  // std::cout << maxHeight << ' ';
+  //Use this line for submission
+  std::cout << maxHeight << std::endl;
   return 0;
 }
 
