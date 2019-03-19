@@ -1,0 +1,1 @@
+for i in ./tests/!(*.a); do ./a.out < $i; cat $*i.a; done
