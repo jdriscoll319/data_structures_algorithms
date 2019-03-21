@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <deque>
 #include <vector>
 
 struct Request {
@@ -31,10 +32,40 @@ public:
 
     Response Process(const Request &request) {
         // write your code here
+        if (finish_time_.empty())
+        {
+            int start_time = request.arrival_time;
+            finish_time_.push_back(start_time + request.process_time);
+            return Response(false, start_time);
+
+        }
+        else
+        {
+            // int finish = finish_time_.front();
+            while (!finish_time_.empty() && finish_time_.front() <= request.arrival_time)
+            {
+                // finish = finish_time_.front();
+                finish_time_.pop_front();
+            }
+            if (finish_time_.size() == size_)
+                return Response(true, 0);
+            else if (finish_time_.empty())
+            {
+                int start_time = request.arrival_time;
+                finish_time_.push_back(start_time + request.process_time);
+                return Response(false, start_time);
+            }
+            else
+            {
+                int finish = finish_time_.back();
+                finish_time_.push_back(finish + request.process_time);
+                return Response(false, finish);
+            }
+        }
     }
 private:
     int size_;
-    std::queue <int> finish_time_;
+    std::deque <int> finish_time_;
 };
 
 std::vector <Request> ReadRequests() {
