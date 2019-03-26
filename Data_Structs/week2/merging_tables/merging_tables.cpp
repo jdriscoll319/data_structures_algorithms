@@ -29,6 +29,16 @@ struct DisjointSets {
 
 	int getParent(int table) {
 		// find parent and compress path
+		std::vector<int> visited;
+		while (sets[table].parent != table)
+		{
+			visited.push_back(table);
+			table = sets[table].parent;
+		}
+		for(auto tab : visited)
+			sets[tab].parent = table;
+		
+		return table;
 	}
 
 	void merge(int destination, int source) {
@@ -37,7 +47,13 @@ struct DisjointSets {
 		if (realDestination != realSource) {
 			// merge two components
 			// use union by rank heuristic
+			//Examples given in assignment do not use rank heuristic...
                         // update max_table_size
+			sets[realDestination].size += sets[realSource].size;
+			sets[realSource].size = 0;
+			sets[realSource].parent = realDestination;
+			if (sets[realDestination].size > max_table_size)
+				max_table_size = sets[realDestination].size;
 		}		
 	}
 };
