@@ -4,10 +4,22 @@
 using std::vector;
 using std::pair;
 
+void explore(const vector<vector<int> > &adj, const int x, vector<bool> &visited)
+{
+  visited[x] = 1;
+  for(const auto v : adj[x])
+  {
+    if (!visited[v])
+      explore(adj, v, visited);
+  }
+}
 
 int reach(vector<vector<int> > &adj, int x, int y) {
   //write your code here
-  return 0;
+  vector<bool> visited(adj.size(), 0);
+  explore(adj, x, visited);
+
+  return visited[y];
 }
 
 int main() {
@@ -22,5 +34,5 @@ int main() {
   }
   int x, y;
   std::cin >> x >> y;
-  std::cout << reach(adj, x - 1, y - 1);
+  std::cout << reach(adj, x - 1, y - 1) << "\n";
 }
