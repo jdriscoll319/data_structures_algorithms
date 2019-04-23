@@ -5,11 +5,64 @@
 
 using std::vector;
 using std::queue;
-using std::pair;
-using std::priority_queue;
+
+void bfs_ifinite(vector<vector<int> > &adj, queue<int> &explore, vector<int> &shortest) {
+  while (!explore.empty())
+  {
+    int source = explore.front();
+    explore.pop();
+
+    for (auto vert : adj[source])
+    {
+      if (shortest[vert] == 1)
+      {
+        explore.push(vert);
+        shortest[vert] = 0;
+      }
+    }
+  }
+}
 
 void shortest_paths(vector<vector<int> > &adj, vector<vector<int> > &cost, int s, vector<long long> &distance, vector<int> &reachable, vector<int> &shortest) {
   //write your code here
+  queue<int> inf_q;
+  queue<int> explore;
+  reachable[s] = 1;
+  distance[s] = 0;
+
+  for (size_t i = 0; i < adj.size(); ++i)
+  {
+    vector<int> explored(adj.size(), 0);
+    explore.push(s);
+
+    while (!explore.empty())
+    {
+      int v = explore.front();
+      explore.pop();
+
+      for (size_t edge = 0; edge < adj[v].size(); ++edge)
+      {
+        if (!explored[adj[v][edge]])
+        {
+          explored[adj[v][edge]] = 1;
+          explore.push(adj[v][edge]);
+        }
+
+        reachable[adj[v][edge]] = 1;
+        long long new_dist = distance[v] + cost[v][edge];
+
+        if (new_dist < distance[adj[v][edge]])
+        {
+          if (i == adj.size() - 1)
+            inf_q.push(adj[v][edge]);
+
+          distance[adj[v][edge]] = new_dist;
+        }
+      }
+    }
+  }
+
+  bfs_ifinite(adj, inf_q, shortest);
 }
 
 int main() {
