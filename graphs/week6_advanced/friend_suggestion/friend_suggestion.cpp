@@ -4,6 +4,7 @@
 #include <queue>
 #include <limits>
 #include <utility>
+#include <iostream>
 
 using namespace std;
 
@@ -16,7 +17,7 @@ typedef long long Len;
 
 // Vector of two priority queues - for forward and backward searches.
 // Each priority queue stores the closest unprocessed node in its head.
-typedef vector<priority_queue<pair<Len, int>,vector<pair<Len,int>>,greater<pair<Len,int>>>> Queue;
+typedef vector< priority_queue< pair<Len, int> , vector< pair<Len,int> >, greater< pair<Len,int> > > > Queue;
 
 const Len INFINITY = numeric_limits<Len>::max() / 4;
 
@@ -37,22 +38,38 @@ class Bidijkstra {
     // Stores all the nodes visited either by forward or backward search.
     vector<int> workset_;
     // Stores a flag for each node which is True iff the node was visited
-    // either by forward or backward search.
-    vector<bool> visited_;
+    // either by forward(visited_[0]) or backward(visited_[1]) search.
+    vector<vector<bool>> visited_;
+
+
+    Len shortest_path(int start, int target)
+    {
+        Len final_dist = INFINITY;
+        for (const int node : workset_)
+        {
+            if (distance_[0][node] + distance_[1][node] < final_dist)
+                final_dist = distance_[0][node] + distance_[1][node];
+        }
+        return final_dist;
+    }
 
 public:
     Bidijkstra(int n, Adj adj, Adj cost)
-        : n_(n), adj_(adj), cost_(cost), distance_(2, vector<Len>(n, INFINITY)), visited_(n)
+        : n_(n), adj_(adj), cost_(cost), distance_(2, vector<Len>(n, INFINITY)), visited_(2, vector<bool>(n))
     { workset_.reserve(n); }
 
     // Initialize the data structures before new query,
     // clear the changes made by the previous query.
     void clear() {
-        for (int i = 0; i < workset_.size(); ++i) {
-            int v = workset_[i];
-            distance_[0][v] = distance_[1][v] = INFINITY;
-            visited_[v] = false;
-        }
+        // for (int i = 0; i < n_; ++i) {
+        //     distance_[0][i] = distance_[1][i] = INFINITY;
+        //     visited_[0][i] = false;
+        //     visited_[1][i] = false;
+        // }
+        distance_[0].assign(distance_[0].size(), INFINITY);
+        distance_[1].assign(distance_[1].size(), INFINITY);
+        visited_[0].assign(visited_[0].size(), false);
+        visited_[1].assign(visited_[1].size(), false);
         workset_.clear();
     }
 
@@ -60,16 +77,58 @@ public:
     // (determined by value of side), to node v trying to
     // relax the current distance by dist.
     void visit(Queue& q, int side, int v, Len dist) {
-        // Implement this method yourself
+        // For each edge connected to the current vertex v
+        for(size_t i = 0; i < adj_[side][v].size(); ++i)
+        {
+            int next_v = adj_[side][v][i];
+            Len new_dist = dist + cost_[side][v][i];
+            if (new_dist < distance_[side][next_v])
+            {
+                q[side].push(std::make_pair(new_dist, next_v));
+                distance_[side][next_v] = new_dist;
+            }
+        }
+        visited_[side][v] = true;
+        workset_.push_back(v);
     }
 
     // Returns the distance from s to t in the graph.
     Len query(int s, int t) {
         clear();
+        //vector of priority_queues
+        //q[0] forward
+        //q[1] backward
         Queue q(2);
-        visit(q, 0, s, 0);
-        visit(q, 1, t, 0);
+        distance_[0][s] = 0;
+        distance_[1][t] = 0;
+        q[0].push(std::make_pair(0, s));
+        q[1].push(std::make_pair(0, t));
+        
         // Implement the rest of the algorithm yourself
+        while (!q[0].empty() && !q[1].empty())
+        {
+            std::pair<Len, int> v;
+            //Forward dijkstra
+            do {
+            v = q[0].top(); q[0].pop();
+            } while (visited_[0][v.second]);
+            visit(q, 0, v.second, v.first);
+            //shortest path has been explored
+            //now need to extract;
+            if (visited_[1][v.second])
+                return shortest_path(s, t);
+
+            //backward dijkstra
+            do {
+                v = q[1].top(); q[1].pop();
+            } while (visited_[1][v.second]);
+            visit(q, 1, v.second, v.first);
+
+            //shortest path has been explored
+            //now need to extract;
+            if (visited_[0][v.second])
+                return shortest_path(s, t);
+        }
 
         return -1;
     }
@@ -97,5 +156,6 @@ int main() {
         int u, v;
         scanf("%d%d", &u, &v);
         printf("%lld\n", bidij.query(u-1, v-1));
+        bidij.clear();
     }
 }
