@@ -58,7 +58,7 @@ class Graph
         }
 
         std::pair<Distance, Vertex> pop() {
-            pair<Distance, Vertex> top = queue->top();
+            std::pair<Distance, Vertex> top = queue->top();
             queue->pop();
             return top;
         }
@@ -86,11 +86,14 @@ public:
     }
 
     void preprocess() {
-        distance.resize(N, INFINITY);
+        // distance.resize(N, INFINITY);
+        // I'm guessing it should actually be this?
+        bidistance.resize(2, std::vector<int>(N, INFINITY));
         // Priority queue will store pairs of (importance, node) with the least important node in the head
         std::priority_queue<std::pair<int, int>, std::vector<std::pair<int,int>>, std::greater<std::pair<int, int>>> queue;
 
         // Implement the rest of the algorithm yourself
+        assert(read_stdin() == 1);
     }
 
     // Returns distance from s to t in the graph
@@ -137,7 +140,7 @@ private:
         }
 
     private:
-        std::vector<int> visited;
+        std::vector<bool> visited;
         std::vector<int> vertices;
     };
     VertexSet visited;
@@ -178,7 +181,7 @@ private:
                 return;
             }
         }
-        list.push_back(w, c);
+        list.push_back(std::make_pair(w, c));
     }
 
     void add_directed_edge(int u, int v, int c) {
@@ -217,6 +220,6 @@ int main() {
     for (int i = 0; i < t; ++i) {
         int u, v;
         assert(scanf("%d %d", &u, &v) == 2);
-        printf("%d\n", g.query(u-1, v-1, 3));
+        printf("%d\n", g.query(u-1, v-1), 3);
     }
 }

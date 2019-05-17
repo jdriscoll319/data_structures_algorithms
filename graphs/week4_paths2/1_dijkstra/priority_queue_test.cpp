@@ -1,20 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>
+#include <utility>
 
 int main()
 {
-  std::vector<int> pq = {10,20,30,40};
-  std::make_heap(pq.begin(), pq.end(), std::greater<int>());
+  std::priority_queue<std::pair<int, int>, std::vector<std::pair<int,int>>> pq;
 
-  for (int i : pq)
-    std::cout << i << ' ';
-  std::cout << "\n";
+  pq.push(std::make_pair(1,10));
 
-  std::pop_heap(pq.begin(), pq.end(), std::greater<int>());
-  for (int i : pq)
-    std::cout << i << ' ';
-  std::cout << "\n";
 
   return 0;
 }
